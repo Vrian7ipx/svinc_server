@@ -1,0 +1,1 @@
+[05-Sep-2015 11:42:35 CST6CDT] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/facturab/public_html/svinc_server/FormularioEntity.php on line 69
