@@ -3,16 +3,38 @@ include_once("connection/connection.php");
 
 class Formularios
 {
+    public function getMuestras(){
+        $db = new DBmysql();
+        $conn = $db->connect();
+        $query = "SELECT DISTINCT m.idModulo AS id,mu.Muestra AS name, me.fecha_inicio as inicio, me.fecha_fin as fin from modulos as m inner join muestras as mu on m.idModulo = mu.idModulo inner join mediciones as me on mu.idMuestra = me.idMuestra";
+        
+        $result = $conn->query($query);    
+        $muestras = array();
+        $ind = 0;
+        while($row = mysqli_fetch_assoc($result)){            
+            $muestras[$ind]['id'] = $row['id'];
+            $muestras[$ind]['name'] = $row['name'];
+            $muestras[$ind]['inicio'] = $row['inicio'];
+            $muestras[$ind]['fin'] = $row['fin'];        
+            $muestras[$ind]['formulario'] = $this->getFormularios($row['id']);
+            $ind++;
+        }        
+
+        return $muestras;
+    }
  	public function getFormularios()
-    {
+    {            
         $db = new DBmysql();
         $conn = $db->connect();
         $query = "SELECT idForm as id, nomFormulario as name FROM formulario";
         $result = $conn->query($query);    
         $formularios = array();                
-        while($row = mysqli_fetch_assoc($result)) {            
+        while($row = mysqli_fetch_assoc($result)) {
+                //$formu = $this->getFormulario($row['id']);
              array_push($formularios, $row);     
         }   
+        //print_r($formularios);
+        return $formularios;
         return json_encode($this->utf8ize($formularios));  
     } 
     function utf8ize($d) {
@@ -36,7 +58,7 @@ class Formularios
             $formulario ['id'] = $row ['id'];
             $formulario ['name'] = $row ['name'];
             $formulario ['secciones'] = $this->getSecciones($idsend);
-        }
+        }        
         return json_encode($this->utf8ize($formulario));
     }
 
@@ -97,8 +119,15 @@ class Formularios
             $query_valores = "SELECT idListaValor as id, descripcion as name, valor FROM listavalores WHERE idpregunta =".$row['id']." ORDER BY secuencial";
             $result_valores = $conn->query($query_valores);
             $valores = array();
-            $ind_val = 0;
+            $ind_val = 0;            
             while ( $row_valores = mysqli_fetch_assoc($result_valores)) {
+                if($ind_val == 0)
+                {
+                    $valores[$ind_val]['id'] =  0;
+                    $valores[$ind_val]['name'] = "Seleccione..";
+                    $valores[$ind_val]['value'] = "0";
+                    $ind_val++;
+                }
                 $valores[$ind_val]['id'] =  $row_valores['id'];
                 $valores[$ind_val]['name'] = $row_valores['name'];
                 $valores[$ind_val]['value'] = $row_valores['valor'];

@@ -1,6 +1,7 @@
- <form action="rest.php"  method="post">
+ <form action="rest_formulario.php"  method="post">
   Formulario Id:<br>
-  <input type="text" name="id">
+  <input type="text" name="user">
+  <input type="text" name="password">
   <br>  
   <input type="submit" value="Submit">
 </form> 
